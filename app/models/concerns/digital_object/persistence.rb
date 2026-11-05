@@ -3,6 +3,8 @@ module DigitalObject::Persistence
   extend ActiveSupport::Concern
 
   def save(manual_commit_to_solr = true)
+    @publish_failed = false
+
     if @publish_after_save && ! HYACINTH[:publish_enabled]
       @errors.add(:publish, 'Digital Objects cannot be published right now because Hyacinth publishing has been disabled by an administrator. You can still save though.')
       return false
@@ -11,6 +13,10 @@ module DigitalObject::Persistence
     before_save
 
     return false unless @errors.blank? && self.valid?
+
+    mint_draft_doi
+
+    return false if @errors.present?
 
     creating_new_record = self.new_record? # save creation info because after persist_to_stores is called, new_record? will return false
 
@@ -32,14 +38,21 @@ module DigitalObject::Persistence
     run_after_create_logic if creating_new_record
     run_after_save_logic
 
-    publish if @publish_after_save
+    @publish_failed = !publish if @publish_after_save
 
     @errors.blank?
+  end
+
+  def publish_failed?
+    @publish_failed == true
   end
 
   def before_save
     # TODO: rewrite with ActiveRecord::Callbacks
     # To be overridden by subclasses
+  end
+
+  def mint_draft_doi
     if @mint_reserved_doi_before_save || (@publish_after_save && self.doi.blank?)
       mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft])
     end
@@ -150,8 +163,9 @@ module DigitalObject::Persistence
       if valid? || force
         # Unpublish items from active publish targets.
         unpublish_all
+        unpublished = @db_record.publications.where.not(status: :unpublished).none?
 
-        if purge
+        if purge && unpublished
           # We're going to delete everything associated with this record
 
           # Delete from Solr
@@ -167,7 +181,7 @@ module DigitalObject::Persistence
           @db_record.destroy
 
           result = true
-        else
+        elsif !purge
           if @parent_digital_object_pids.present?
             # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
             @parent_digital_object_pids.each do |parent_digital_object_pid|

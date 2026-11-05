@@ -37,8 +37,6 @@ describe DigitalObject::FileSystem, :type => :model do
     end
 
     it "does not access any fedora datastreams when publishing" do
-      pending("Pending: further implementation required")
-
       expect(subject.fedora_object).not_to receive(:datastreams)
       subject.publish
     end

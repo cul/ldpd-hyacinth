@@ -85,45 +85,12 @@ namespace :hyacinth do
       }
 
       # Create Test Publish Targets
-      test_publish_target_1 = DigitalObject::PublishTarget.new
-      test_publish_target_1.set_digital_object_data(
-        {
-          'project' => { 'string_key' => 'publish_targets' },
-          'publish_target_data' => {
-            'string_key' => 'test_publish_target_1'
-          },
-          'dynamic_field_data' => {
-            'title' => [
-              'title_sort_portion' => 'Publish Target 1'
-            ]
-          }
-        },
-        false
-      )
-      test_publish_target_1.save
-
-      test_publish_target_2 = DigitalObject::PublishTarget.new
-      test_publish_target_2.set_digital_object_data(
-        {
-          'project' => { 'string_key' => 'publish_targets' },
-          'publish_target_data' => {
-            'string_key' => 'test_publish_target_2'
-          },
-          'dynamic_field_data' => {
-            'title' => [
-              'title_sort_portion' => 'Publish Target 2'
-            ]
-          }
-        },
-        false
-      )
-      test_publish_target_2.save
-
-      # Enable test_publish_target_1 and test_publish_target_2 for test_project and s3_test_project
-      test_project.enabled_publish_target_pids = [test_publish_target_1.pid, test_publish_target_2.pid]
-      test_project.save
-      s3_test_project.enabled_publish_target_pids = [test_publish_target_1.pid, test_publish_target_2.pid]
-      s3_test_project.save
+      test_publish_targets = [
+        PublishTarget.create!(string_key: 'test_publish_target_1', display_label: 'Publish Target 1', publish_url: 'http://localhost/publish_target_1', api_key: 'test_api_key'),
+        PublishTarget.create!(string_key: 'test_publish_target_2', display_label: 'Publish Target 2', publish_url: 'http://localhost/publish_target_2', api_key: 'test_api_key')
+      ]
+      test_project.publish_targets = test_publish_targets
+      s3_test_project.publish_targets = test_publish_targets
     end
 
   end

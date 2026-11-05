@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_26_125157) do
+ActiveRecord::Schema[7.0].define(version: 2026_11_02_133251) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -265,6 +265,17 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_26_125157) do
     t.index ["publish_target_id"], name: "index_projects_publish_targets_on_publish_target_id"
   end
 
+  create_table "publications", force: :cascade do |t|
+    t.integer "digital_object_record_id", null: false
+    t.integer "publish_target_id", null: false
+    t.string "status", null: false
+    t.text "error_message"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["digital_object_record_id", "publish_target_id"], name: "unique_publications_record_and_target", unique: true
+    t.index ["publish_target_id"], name: "index_publications_on_publish_target_id"
+  end
+
   create_table "publish_targets", force: :cascade do |t|
     t.string "string_key", null: false
     t.string "display_label", null: false
@@ -272,6 +283,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_26_125157) do
     t.string "api_key", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.integer "doi_priority"
+    t.index ["doi_priority"], name: "index_publish_targets_on_doi_priority", unique: true
     t.index ["string_key"], name: "index_publish_targets_on_string_key", unique: true
   end
 

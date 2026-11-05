@@ -45,6 +45,12 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
       return
     end
 
+    # Include pending statuses because a failed request may have left the digital object published
+    if @publish_target.publications.where.not(status: :unpublished).exists?
+      render_camelized_json({ errors: { base: ['Cannot delete a publish target that may still have published digital objects'] } }, status: :unprocessable_entity)
+      return
+    end
+
     @publish_target.destroy
     render_camelized_json({}, status: :no_content)
   end
@@ -52,7 +58,7 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   private
 
     def publish_target_params
-      permitted = [:display_label, :publish_url, :api_key, project_ids: []]
+      permitted = [:display_label, :publish_url, :api_key, :doi_priority, project_ids: []]
       permitted << :string_key if action_name == 'create'
       params.require(:publish_target).permit(permitted)
     end
@@ -64,6 +70,7 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
         display_label: publish_target.display_label,
         publish_url: publish_target.publish_url,
         api_key: publish_target.api_key,
+        doi_priority: publish_target.doi_priority,
         projects: publish_target.projects.map { |project| { id: project.id, string_key: project.string_key, display_label: project.display_label } }
       }
     end

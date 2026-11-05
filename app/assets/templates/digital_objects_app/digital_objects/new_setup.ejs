@@ -72,6 +72,7 @@
               <%
                 for (var i = 0; i < projects[indexOfSelectedProject]['enabled_digital_object_types'].length; i++) {
                     if(projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['string_key'] == 'asset') {continue;} //Ignore digital_object_type string key "asset" because those are normally created by the upload action
+                    if(projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['string_key'] == 'publish_target') {continue;} // Ignore legacy publish targets
                     %><%= '<option value="' + projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['string_key'] + '">' + projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['display_label'] + '</option>' %><%
                 }
               %>

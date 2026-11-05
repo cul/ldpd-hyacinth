@@ -91,6 +91,8 @@ class DigitalObjectsController < ApplicationController
     if save_or_validate_digital_object
       render_json = { success: true }.merge!(@digital_object.as_confirmation_json)
       render_json['test'] = true if test_mode
+    elsif @digital_object.publish_failed?
+      render_json = { success: false, publish_failed: true, pid: @digital_object.pid, errors: @digital_object.errors }
     else
       render_json = { errors: @digital_object.errors }
     end
@@ -138,6 +140,8 @@ class DigitalObjectsController < ApplicationController
     if test_mode ? @digital_object.valid? : @digital_object.save
       render_json = { success: true, pid: @digital_object.pid }.merge(test_mode ? { 'test' => true } : {})
       RepublishAssetJob.perform_later(@digital_object.pid) if republish_after_save
+    elsif @digital_object.publish_failed?
+      render_json = { success: false, publish_failed: true, pid: @digital_object.pid, errors: @digital_object.errors }
     else
       render_json = { errors: @digital_object.errors }
     end
