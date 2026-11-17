@@ -18,6 +18,9 @@
 /local
 /spec/local
 
+# Temporarily ignore hardcoded publish target pids
+/lib/tasks/hyacinth/publish_targets_pids_to_string_key.rb
+
 # Ignore editor files
 *~
 \#*\#
