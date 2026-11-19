@@ -20,6 +20,7 @@ namespace :hyacinth do
       return targets_mapped
     end
 
+    # Phase 1 - Assigning publish targets to projects
     # Usage: bundle exec rake hyacinth:publish_targets:assign_projects DRY_RUN=true
     desc 'Assign new publish targets to projects based on their legacy enabled publish targets'
     task assign_projects: :environment do
@@ -28,13 +29,7 @@ namespace :hyacinth do
       # Old digital object publish targets pids mapped to their new active record publish target string keys
       new_string_keys_by_legacy_pid = NEW_STRING_KEYS_BY_LEGACY_PT_PID
       # TODO: override legacy_targets with values from the hash above
-  
-      # Staging projects only get DLC Catalog Staging (to confirm)
-      # TODO: Replace with the string keys of these projects:
-      # DLC Catalog [Staging], DLC Restricted Catalog [Staging], Carnegie Corporation Oral History Project [Staging],
-      # Language and Culture Archive of Ashkenazic Jewry [Staging], Sites Restricted [Staging], Sites [Staging],
-      # The New York real estate brochure collection [staging], Time Based Media [Staging]
-      staging_project_string_keys = ['legacy_dlc_staging']
+
       dry_run = ENV['DRY_RUN'] == 'true'
       puts 'Dry run: no changes will be saved.' if dry_run
 
@@ -47,32 +42,68 @@ namespace :hyacinth do
 
       puts "========================"
 
-      puts "Legacy pids by project: #{legacy_pids_by_project}"
       legacy_pids_by_project = legacy_pids_by_project.select { |_project, legacy_pids| legacy_pids.present? }
-      puts "========================"
-      puts "Legacy pids updated: #{legacy_pids_by_project.inspect}"
 
       unmapped_pids = legacy_pids_by_project.values.flatten.uniq - new_string_keys_by_legacy_pid.keys
       abort "No mapping for legacy publish targets: #{unmapped_pids.join(', ')}" if unmapped_pids.present?
 
-      # return
-      new_string_keys_by_project = legacy_pids_by_project.to_h do |project, legacy_pids|
-        # An array of publish targets string keys that should be enabled for the project
-        string_keys = new_string_keys_by_legacy_pid.select { |legacy_pid, string_key| legacy_pids.include?(legacy_pid)}.values
-
-        # Staging projects use the staging instance of DLC Catalog
-        string_keys = string_keys.map { |key| key == 'dlc_catalog' ? 'dlc_catalog_staging' : key } if staging_project_string_keys.include?(project.string_key)
-        [project, string_keys.uniq]
+      # Creates a hash of
+      # Project => [new_publish_target_string_key1, new_publish_target_string_key2...]
+      # Legacy publish targets mapped to nil don't add a new publish target
+      new_string_keys_by_project = legacy_pids_by_project.transform_values do |legacy_pids|
+        new_string_keys_by_legacy_pid.select { |legacy_pid, _string_key| legacy_pids.include?(legacy_pid) }.values.compact.uniq
       end
 
       publish_targets_by_string_key = PublishTarget.where(string_key: new_string_keys_by_project.values.flatten).index_by(&:string_key)
+      puts "Publish targets by string key: #{publish_targets_by_string_key}"
       missing_string_keys = new_string_keys_by_project.values.flatten.uniq - publish_targets_by_string_key.keys
       abort "Publish targets don't exist: #{missing_string_keys.join(', ')}" if missing_string_keys.present?
 
-      # ActiveRecord::Base.transaction do
-      #   new_string_keys_by_project.each do |project, string_keys|
-      #   end
-      # end
+      errors = []
+      ActiveRecord::Base.transaction do
+        new_string_keys_by_project.each do |project, string_keys|
+          puts "Current project: #{project.string_key}"
+          # Legacy publish targets that are mapped to nil
+          unmapped_legacy_pids = legacy_pids_by_project[project].select { |legacy_pid| new_string_keys_by_legacy_pid[legacy_pid].nil? }
+          puts "WARNING: #{project.string_key}: no new publish target for #{unmapped_legacy_pids.join(', ')}" if unmapped_legacy_pids.present?
+
+          if string_keys.empty?
+            puts "WARNING: #{project.string_key}: no new publish targets to assign"
+            next
+          end
+
+          # Only add missing publish targets in case this task is run multiple times
+          publish_targets = string_keys.map { |string_key| publish_targets_by_string_key[string_key] }
+          new_publish_targets = publish_targets - project.publish_targets.to_a
+          puts "#{project.string_key}: #{string_keys.join(', ')}#{' (already assigned)' if new_publish_targets.empty?}"
+
+          
+          next if dry_run || new_publish_targets.empty?
+          
+          puts "Project #{project.string_key} will be assigned the following publish targets #{new_publish_targets.inspect}"
+  
+          begin
+            project.publish_targets << new_publish_targets
+          rescue StandardError => e
+            errors << "#{project.string_key}: #{e.message}"
+          end
+        end
+
+        raise ActiveRecord::Rollback if errors.present?
+      end
+
+      abort "ERRORS: nothing was saved.\n#{errors.join("\n")}" if errors.present?
+      puts dry_run ? 'Dry run complete: nothing was saved.' : 'Done.'
+    end
+
+    # Phase 2 - Assigning publish targets to digital object records
+    # Usage: bundle exec rake hyacinth:publish_targets:assign_digital_objects DRY_RUN=true
+    desc 'Assign new publish targets to digital objects'
+    task assign_digital_objects: :environment do
+      # TODO:
+      # Perform this step based on the data exported from Solr
+      # Skip objects of type "publish_target"
+      # Use enabled_publish_target_pid_sim (no longer written after PT changes but present in prod)
     end
   end
 
