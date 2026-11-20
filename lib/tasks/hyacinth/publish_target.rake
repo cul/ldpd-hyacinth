@@ -100,10 +100,112 @@ namespace :hyacinth do
     # Usage: bundle exec rake hyacinth:publish_targets:assign_digital_objects DRY_RUN=true
     desc 'Assign new publish targets to digital objects'
     task assign_digital_objects: :environment do
-      # TODO:
       # Perform this step based on the data exported from Solr
-      # Skip objects of type "publish_target"
       # Use enabled_publish_target_pid_sim (no longer written after PT changes but present in prod)
+      # Only writes to the digital_object_records_publish_targets table. Fedora isn't read or modified.
+
+      # The CSV below includes the following Digital Object fields:
+      # pid
+      # state_ss (useful for reporting)
+      # hyacinth_type_ss (items vs assets; useful for reporting)
+      # project_string_key_sim (can have multiple values, joined with a comma)
+      # enabled_publish_target_pid_sim (can have multiple values, joined with a comma)
+      csv_path = File.join(Rails.root, 'tmp', 'digital_objects-20261120.csv')
+
+      # Old digital object publish targets pids mapped to their new active record publish target string keys
+      new_string_keys_by_legacy_pid = NEW_STRING_KEYS_BY_LEGACY_PT_PID_FOR_DIGITAL_OBJECTS
+
+      dry_run = ENV['DRY_RUN'] == 'true'
+      puts 'Dry run: no changes will be saved.' if dry_run
+
+      publish_targets_by_string_key = PublishTarget.all.index_by(&:string_key)
+      puts "Publish targets by string key: #{publish_targets_by_string_key}"
+      missing_string_keys = new_string_keys_by_legacy_pid.values.compact.uniq - publish_targets_by_string_key.keys
+      abort "Publish targets don't exist: #{missing_string_keys.join(', ')}" if missing_string_keys.present?
+
+      # Project string key => [publish target string keys enabled for the project]
+      publish_target_string_keys_by_project = {}
+      Project.includes(:publish_targets).each do |project|
+        publish_target_string_keys_by_project[project.string_key] = project.publish_targets.map(&:string_key)
+      end
+
+      updated_count = 0
+      error_count = 0
+
+      CSV.open(csv_path, 'rb', headers: true) do |csv|
+        csv.each do |row|
+          pid = row['pid']
+          project_string_keys = row['project_string_key_sim'].to_s.split(',').map(&:strip)
+          legacy_pids = row['enabled_publish_target_pid_sim'].to_s.split(',').map(&:strip)
+
+          # These should already be excluded but flag if they're present
+          if row['hyacinth_type_ss'] == 'publish_target' || row['state_ss'] == 'D'
+            puts "#{pid}: skipped (type: #{row['hyacinth_type_ss']}, state: #{row['state_ss']})"
+            next
+          end
+
+          record = DigitalObjectRecord.find_by(pid: pid)
+          if record.nil?
+            puts "ERROR: #{pid}: digital object record not found"
+            error_count += 1
+            next
+          end
+
+          string_keys = []
+
+          # Map to the new publish targets that rely on string keys instead
+          legacy_pids.each do |legacy_pid|
+            if new_string_keys_by_legacy_pid[legacy_pid].present?
+              puts "Mapping old pid: #{legacy_pid} to #{new_string_keys_by_legacy_pid[legacy_pid]}"
+              string_keys << new_string_keys_by_legacy_pid[legacy_pid]
+            elsif new_string_keys_by_legacy_pid.key?(legacy_pid)
+              puts "WARNING: #{pid}: legacy publish target #{legacy_pid} isn't mapped yet"
+            elsif !NEW_STRING_KEYS_BY_LEGACY_PT_PID.key?(legacy_pid)
+              puts "ERROR: #{pid}: unknown legacy publish target #{legacy_pid}"
+              error_count += 1
+            end
+            # Anything else is a subsite and doesn't need a mapping
+          end
+
+          string_keys = string_keys.uniq
+          puts "New publish target string keys: #{string_keys} for document #{pid}"
+
+          if string_keys.empty?
+            puts "WARNING: #{pid}: no new publish targets to assign (legacy publish targets: #{legacy_pids.join(', ')})"
+            next
+          end
+
+          # Publish targets need to be assigned to the project the digital object uses. Otherwise, the object can't be saved.
+          project_publish_target_string_keys = []
+          project_string_keys.each do |project_string_key|
+            if publish_target_string_keys_by_project.key?(project_string_key)
+              project_publish_target_string_keys += publish_target_string_keys_by_project[project_string_key]
+            else
+              puts "WARNING: #{pid}: project #{project_string_key} not found"
+            end
+          end
+          not_enabled_string_keys = string_keys - project_publish_target_string_keys
+          puts "WARNING: #{pid}: #{not_enabled_string_keys.join(', ')} not enabled for project #{project_string_keys.join(', ')}" if not_enabled_string_keys.present?
+
+          # Only add missing publish targets in case this task is run multiple times
+          publish_targets = string_keys.map { |string_key| publish_targets_by_string_key[string_key] }
+          new_publish_targets = publish_targets - record.publish_targets.to_a
+          puts "#{pid}: #{string_keys.join(', ')}#{' (already assigned)' if new_publish_targets.empty?}"
+
+          next if dry_run || new_publish_targets.empty?
+
+          begin
+            record.publish_targets << new_publish_targets
+            updated_count += 1
+          rescue StandardError => e
+            puts "ERROR: #{pid}: #{e.message}"
+            error_count += 1
+          end
+        end
+      end
+
+      puts dry_run ? 'Dry run complete: nothing was saved.' : "Done. Updated #{updated_count} digital object records."
+      puts "#{error_count} errors" if error_count.positive?
     end
   end
 
